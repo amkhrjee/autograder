@@ -9,12 +9,18 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center items-center">
       {!files && (
-        <Image src={"./files.svg"} alt="Files" width={120} height={120} />
+        <Image
+          src={"./college_entrance_exam_amico.svg"}
+          alt="Files"
+          width={250}
+          height={250}
+          className="pb-4"
+        />
       )}
       {files && files!.length && (
-        <div className="text-center">
+        <div className="text-center text-4xl p-4 ">
           <p>You've uploaded</p>
-          <p className="text-4xl bold ">{files!.length}</p>
+          <p className="text-6xl font-bold ">{files!.length}</p>
           <p>marksheet{files!.length == 1 ? "" : "s"}</p>
           <br />
         </div>

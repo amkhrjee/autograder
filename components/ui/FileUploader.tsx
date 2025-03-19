@@ -5,15 +5,15 @@ import { FaUpload, FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import { FilesContext } from "@/app/context/FilesContext";
 import { SetFilesContext } from "@/app/context/SetFilesContext";
 import { Status } from "@/config/definitions";
-import sharp from "sharp";
+import { getSignedURL } from "@/app/actions";
+import imageCompression from "browser-image-compression";
+import JSZip from "jszip";
 
 export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
   const files = useContext(FilesContext);
   const setFiles = useContext(SetFilesContext);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("Button Clicked!");
-
     if (e.target.files?.length) {
       console.log(e.target.files);
       setFiles!(e.target.files);
@@ -21,22 +21,41 @@ export function FileUploader() {
     }
   };
 
-  const compressImage = async (image: ArrayBuffer) => {
-    "use server";
-    return await sharp(image).jpeg({ quality: 80 }).toBuffer();
-  };
+  function handleGoBack(): void {
+    setStatus(Status.Uploading);
+    setFiles!(null);
+  }
 
-  const handleNextStep = async () => {
-    "use server";
-    console.log("SIZES BEFORE COMPRESSION");
-    for (let file in files!) {
-      console.log(file);
-    }
+  function compressFiles(files: FileList) {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
 
-    const compressedImages = Array.from(files!).map(async (file) =>
-      compressImage(await file.arrayBuffer())
+    return Promise.all(
+      Array.from(files).map(async (file) => imageCompression(file, options))
     );
-  };
+  }
+
+  async function handleNextStep() {
+    const compressedImages = await compressFiles(files!);
+    const zip = new JSZip();
+    compressedImages.forEach((file) => {
+      zip.file(file.name, file);
+    });
+    const zippedBlob = await zip.generateAsync({ type: "blob" });
+
+    const signedURL = await getSignedURL();
+    const url = await signedURL.success.url;
+    await fetch(url, {
+      method: "PUT",
+      body: zippedBlob,
+      headers: {
+        "Content-Type": zippedBlob.type,
+      },
+    });
+  }
 
   return (
     <>
@@ -50,6 +69,7 @@ export function FileUploader() {
       />
       {status === Status.Uploading && (
         <Button
+          className="text-lg"
           onClick={() => document.getElementById("file_uploader")?.click()}
         >
           <FaUpload /> Upload scanned marksheets
@@ -57,11 +77,15 @@ export function FileUploader() {
       )}
       {status === Status.Uploaded && (
         <>
-          <Button>
+          <Button className="text-lg" onClick={handleNextStep}>
             Proceed to next step <FaArrowRight />
           </Button>
           <br />
-          <Button variant="secondary" onClick={handleNextStep}>
+          <Button
+            className="text-lg"
+            variant="secondary"
+            onClick={handleGoBack}
+          >
             <FaArrowLeft /> Go back
           </Button>
         </>
