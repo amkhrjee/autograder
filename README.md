@@ -6,8 +6,8 @@ Made as a semester project for and under the supervision of [Dr. Shobhanjana Kal
 
 ## Architecture
 
-Made with Next.js on AWS Lambda and AWS S3. Text extraction is done using AWS Textract.
+Built with Next.js, deployed on AWS Lambda and AWS S3. Text extraction is powered by AWS Textract.
 
-This is a beta software, made specifically with Tezpur University's marksheet format in mind.
+This is a beta version, designed specifically for Tezpur University's marksheet format.
 
-![System Design]("./public/system-design.png)
+![System Design](./public/system-design.png)
