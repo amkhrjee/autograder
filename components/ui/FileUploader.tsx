@@ -102,7 +102,10 @@ export function FileUploader() {
   async function handleDownload() {
     try {
       const response = await fetch(downloadURL);
-      const blob = await response.blob();
+      const arrayBuffer = await response.arrayBuffer();
+      const blob = new Blob([arrayBuffer], {
+        type: "application/octet-stream",
+      });
 
       const downloadUrl = window.URL.createObjectURL(blob);
 
