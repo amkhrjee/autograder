@@ -35,7 +35,7 @@ export async function getSignedURL() {
 
 export async function checkAvailibility() {
   const headObjectCommand = new HeadObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.MY_AWS_BUCKET_NAME,
     Key: "final_output.xlsx",
   });
 
@@ -59,7 +59,7 @@ export async function checkAvailibility() {
 
 export async function getDownloadURL() {
   const getObjectCommand = new GetObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.MY_AWS_BUCKET_NAME,
     Key: "final_output.xlsx",
   });
 
