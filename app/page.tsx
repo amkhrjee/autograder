@@ -7,14 +7,18 @@ import { FilesContext } from "./context/FilesContext";
 export default function Home() {
   const files = useContext(FilesContext);
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center md:text-2xl">
+      <p>Marksheets -{">"} Speadsheet</p>
+      <p>
+        in <s>hours</s> minutes
+      </p>
       {!files && (
         <Image
           src={"./college_entrance_exam_amico.svg"}
           alt="Files"
           width={250}
           height={250}
-          className="pb-4"
+          className="pb-4 md:h-96 w-96"
         />
       )}
       {files && files!.length && (
