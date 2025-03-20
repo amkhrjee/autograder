@@ -30,11 +30,13 @@ export function FileUploader() {
       const intervalId = setInterval(() => {
         checkAvailibility().then((isAvailable) => {
           if (isAvailable) {
-            setStatus(Status.Processed);
-            getDownloadURL().then((url) => {
-              setDownloadURL(url);
-              clearInterval(intervalId);
-            });
+            clearInterval(intervalId);
+            setTimeout(() => {
+              setStatus(Status.Processed);
+              getDownloadURL().then((url) => {
+                setDownloadURL(url);
+              });
+            }, 2000);
           }
         });
       }, 500);
@@ -175,7 +177,7 @@ export function FileUploader() {
         </>
       )}
       {status === Status.Processed && (
-        <Button onClick={() => setTimeout(handleDownload, 1000)}>
+        <Button onClick={handleDownload}>
           <DownloadIcon /> Download result.xlsx
         </Button>
       )}
