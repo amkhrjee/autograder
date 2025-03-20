@@ -14,7 +14,7 @@ const s3 = new S3Client({
 export async function getSignedURL() {
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: "archive",
+    Key: "archive.zip",
   });
 
   const signedURL = getSignedUrl(s3, putObjectCommand, {
