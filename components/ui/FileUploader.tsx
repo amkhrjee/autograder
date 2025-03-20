@@ -104,7 +104,7 @@ export function FileUploader() {
       const response = await fetch(downloadURL);
       const arrayBuffer = await response.arrayBuffer();
       const blob = new Blob([arrayBuffer], {
-        type: "application/octet-stream",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const downloadUrl = window.URL.createObjectURL(blob);
