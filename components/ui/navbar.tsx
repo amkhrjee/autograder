@@ -1,5 +1,5 @@
 import { FaGithub } from "react-icons/fa6";
-import { Button, buttonVariants } from "./button";
+import { buttonVariants } from "./button";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 

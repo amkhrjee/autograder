@@ -44,7 +44,7 @@ export async function checkAvailibility() {
     const lastModified = response.LastModified;
 
     const currentTime = new Date();
-    const timeDifference = currentTime.getTime() - lastModified?.getTime()!;
+    const timeDifference = currentTime.getTime() - lastModified!.getTime()!;
     const oneMinuteInMs = 5 * 1000;
 
     if (timeDifference <= oneMinuteInMs) {

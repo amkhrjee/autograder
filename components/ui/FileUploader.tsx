@@ -19,6 +19,8 @@ import {
 export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
   const [downloadURL, setDownloadURL] = useState<string>("");
+  const [shouldNotify, setShouldNotify] = useState<boolean>(false);
+
   useEffect(() => {
     if (status === Status.Processed && shouldNotify) {
       new Notification("Done processing marksheets!", {
@@ -37,8 +39,7 @@ export function FileUploader() {
         });
       }, 500);
     }
-  }, [status]);
-  const [shouldNotify, setShouldNotify] = useState<boolean>(false);
+  }, [status, shouldNotify]);
   const files = useContext(FilesContext);
   const setFiles = useContext(SetFilesContext);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {

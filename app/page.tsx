@@ -19,8 +19,8 @@ export default function Home() {
       )}
       {files && files!.length && (
         <div className="text-center text-4xl p-4 ">
-          <p>You've uploaded</p>
-          <p className="text-6xl font-bold ">{files!.length}</p>
+          <p>You&apos;ve uploaded</p>
+          <p className="text-6xl font-bold">{files!.length}</p>
           <p>marksheet{files!.length == 1 ? "" : "s"}</p>
           <br />
         </div>
