@@ -54,7 +54,7 @@ export function FileUploader() {
     setStatus(Status.Processing);
     setTimeout(() => {
       setStatus(Status.Processed);
-    }, 1000);
+    }, 3000);
     // const compressedImages = await compressFiles(files!);
     // const zip = new JSZip();
     // compressedImages.forEach((file) => {
@@ -145,7 +145,7 @@ export function FileUploader() {
             <Loader2 className="animate-spin" /> Processing
           </Button>
           <br />
-          <p>This can take a while, so keep this tab open.</p>
+          <p>This may take a while, so keep this tab open.</p>
           <br />
           <Button disabled={shouldNotify} onClick={getNotificationPermission}>
             <Bell />{" "}

@@ -16,7 +16,7 @@ import { lorelei } from "@dicebear/collection";
 export function Navbar() {
   return (
     <div className="flex flex-row justify-between items-center p-4 mb-2">
-      <p className="text-lg font-bold">autograder</p>
+      <p className="text-lg font-bold">📝 Autograder</p>
       <div className="flex flex-row items-center gap-2">
         <Button variant={"outline"} size={"icon"}>
           <FaGithub size={24} />
