@@ -162,7 +162,9 @@ export function FileUploader() {
             <Loader2 className="animate-spin" /> Processing
           </Button>
           <br />
-          <p>This may take a while, so keep this tab open.</p>
+          <p className="text-sm">
+            This may take a while, so keep this tab open.
+          </p>
           <br />
           <Button disabled={shouldNotify} onClick={getNotificationPermission}>
             <Bell />{" "}
