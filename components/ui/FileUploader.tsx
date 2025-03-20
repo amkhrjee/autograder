@@ -175,7 +175,7 @@ export function FileUploader() {
         </>
       )}
       {status === Status.Processed && (
-        <Button onClick={handleDownload}>
+        <Button onClick={() => setTimeout(handleDownload, 1000)}>
           <DownloadIcon /> Download result.xlsx
         </Button>
       )}
