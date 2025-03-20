@@ -103,9 +103,8 @@ export function FileUploader() {
     try {
       const response = await fetch(downloadURL);
       const arrayBuffer = await response.arrayBuffer();
-      // thanks to: https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
       const blob = new Blob([arrayBuffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/octet-stream",
       });
 
       const downloadUrl = window.URL.createObjectURL(blob);
