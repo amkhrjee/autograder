@@ -1,25 +1,41 @@
 "use client";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Button } from "./button";
-import { FaUpload, FaArrowRight, FaArrowLeft } from "react-icons/fa6";
 import { FilesContext } from "@/app/context/FilesContext";
 import { SetFilesContext } from "@/app/context/SetFilesContext";
 import { Status } from "@/config/definitions";
-import { getSignedURL } from "@/app/actions";
+import { checkAvailibility, getDownloadURL, getSignedURL } from "@/app/actions";
 import imageCompression from "browser-image-compression";
 import JSZip from "jszip";
-import { Bell, DownloadIcon, Loader2, UploadIcon } from "lucide-react";
-import { ImNotification } from "react-icons/im";
-import { title } from "process";
-import { buttonVariants } from "@/components/ui/button";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  DownloadIcon,
+  Loader2,
+  UploadIcon,
+} from "lucide-react";
 
 export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
+  const [downloadURL, setDownloadURL] = useState<string>("");
   useEffect(() => {
     if (status === Status.Processed && shouldNotify) {
       new Notification("Done processing marksheets!", {
         body: "You can download the .xlsx file or close the tab.",
       });
+    } else if (status === Status.Processing) {
+      const intervalId = setInterval(() => {
+        checkAvailibility().then((isAvailable) => {
+          if (isAvailable) {
+            setStatus(Status.Processed);
+            getDownloadURL().then((url) => {
+              setDownloadURL(url);
+              clearInterval(intervalId);
+            });
+          }
+        });
+      }, 500);
     }
   }, [status]);
   const [shouldNotify, setShouldNotify] = useState<boolean>(false);
@@ -52,25 +68,22 @@ export function FileUploader() {
 
   async function handleNextStep() {
     setStatus(Status.Processing);
-    setTimeout(() => {
-      setStatus(Status.Processed);
-    }, 3000);
-    // const compressedImages = await compressFiles(files!);
-    // const zip = new JSZip();
-    // compressedImages.forEach((file) => {
-    //   zip.file(file.name, file);
-    // });
-    // const zippedBlob = await zip.generateAsync({ type: "blob" });
+    const compressedImages = await compressFiles(files!);
+    const zip = new JSZip();
+    compressedImages.forEach((file) => {
+      zip.file(file.name, file);
+    });
+    const zippedBlob = await zip.generateAsync({ type: "blob" });
 
-    // const signedURL = await getSignedURL();
-    // const url = await signedURL.success.url;
-    // await fetch(url, {
-    //   method: "PUT",
-    //   body: zippedBlob,
-    //   headers: {
-    //     "Content-Type": zippedBlob.type,
-    //   },
-    // });
+    const signedURL = await getSignedURL();
+    const url = await signedURL.success.url;
+    await fetch(url, {
+      method: "PUT",
+      body: zippedBlob,
+      headers: {
+        "Content-Type": zippedBlob.type,
+      },
+    });
   }
 
   function getNotificationPermission() {
@@ -127,7 +140,7 @@ export function FileUploader() {
       {status === Status.Uploaded && (
         <>
           <Button className="text-lg" onClick={handleNextStep}>
-            Proceed to next step <FaArrowRight />
+            Proceed to next step <ArrowRight />
           </Button>
           <br />
           <Button
@@ -135,7 +148,7 @@ export function FileUploader() {
             variant="secondary"
             onClick={handleGoBack}
           >
-            <FaArrowLeft /> Go back
+            <ArrowLeft /> Go back
           </Button>
         </>
       )}

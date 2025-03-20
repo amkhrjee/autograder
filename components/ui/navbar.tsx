@@ -21,7 +21,7 @@ export function Navbar() {
         <Button variant={"outline"} size={"icon"}>
           <FaGithub size={24} />
         </Button>
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
               <AvatarImage
@@ -42,7 +42,7 @@ export function Navbar() {
               <LogOutIcon /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
     </div>
   );
