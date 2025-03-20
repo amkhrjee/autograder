@@ -100,14 +100,14 @@ export function FileUploader() {
 
   async function handleDownload() {
     try {
-      const response = await fetch("https://github.com/shadcn.png");
+      const response = await fetch(downloadURL);
       const blob = await response.blob();
 
       const downloadUrl = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = "image.png";
+      link.download = "result.xlsx";
 
       document.body.appendChild(link);
       link.click();
