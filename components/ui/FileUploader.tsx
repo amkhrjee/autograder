@@ -164,11 +164,7 @@ export function FileUploader() {
           <br />
           <p>This may take a while, so keep this tab open.</p>
           <br />
-          <Button
-            className="sm:hidden lg:block"
-            disabled={shouldNotify}
-            onClick={getNotificationPermission}
-          >
+          <Button disabled={shouldNotify} onClick={getNotificationPermission}>
             <Bell />{" "}
             {shouldNotify
               ? "You'll be notified when done"
