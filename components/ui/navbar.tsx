@@ -2,6 +2,7 @@ import { FaGithub } from "react-icons/fa6";
 import { buttonVariants } from "./button";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 export function Navbar() {
   return (
@@ -23,6 +24,9 @@ export function Navbar() {
         >
           <FaGithub />
         </Link>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </div>
   );
