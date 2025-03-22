@@ -3,6 +3,7 @@ import { FileUploader } from "@/components/ui/FileUploader";
 import Image from "next/image";
 import { useContext } from "react";
 import { FilesContext } from "./context/FilesContext";
+import { motion } from "motion/react";
 
 export default function Home() {
   const files = useContext(FilesContext);
@@ -10,17 +11,23 @@ export default function Home() {
     <div className="flex flex-col justify-center items-center md:text-2xl">
       {!files && (
         <>
-          <p>Marksheets -{">"} Speadsheet</p>
-          <p>
-            in <s>hours</s> minutes
-          </p>
-          <Image
-            src={"./college_entrance_exam_amico.svg"}
-            alt="Files"
-            width={250}
-            height={250}
-            className="pb-4 md:h-96 md:w-96"
-          />
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, translateY: -40 }}
+            animate={{ opacity: 1, translateY: 0 }}
+          >
+            <p>Marksheets -{">"} Speadsheet</p>
+            <p>
+              in <s>hours</s> minutes
+            </p>
+            <Image
+              src={"./college_entrance_exam_amico.svg"}
+              alt="Files"
+              width={250}
+              height={250}
+              className="pb-4 md:h-96 md:w-96"
+            />
+          </motion.div>
         </>
       )}
       {files && files!.length && (
@@ -31,7 +38,12 @@ export default function Home() {
           <br />
         </div>
       )}
-      <FileUploader />
+      <motion.div
+        initial={{ opacity: 0, translateY: 40 }}
+        animate={{ opacity: 1, translateY: 0 }}
+      >
+        <FileUploader />
+      </motion.div>
     </div>
   );
 }
