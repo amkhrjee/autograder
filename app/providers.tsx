@@ -11,7 +11,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <FilesContext.Provider value={files}>
       <SetFilesContext.Provider value={setFiles}>
-        <div className="flex flex-col h-screen  justify-between">
+        <div className="flex flex-col h-dvh  justify-between">
           {children}
           <footer className="text-center p-4">
             <p>Made for Tezpur University</p>
