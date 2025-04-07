@@ -1,10 +1,8 @@
 "use client";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { Button } from "./button";
+import { checkAvailibility, getDownloadURL, getSignedURL } from "@/app/actions";
 import { FilesContext } from "@/app/context/FilesContext";
 import { SetFilesContext } from "@/app/context/SetFilesContext";
 import { Status } from "@/config/definitions";
-import { checkAvailibility, getDownloadURL, getSignedURL } from "@/app/actions";
 import imageCompression from "browser-image-compression";
 import JSZip from "jszip";
 import {
@@ -15,6 +13,8 @@ import {
   Loader2,
   UploadIcon,
 } from "lucide-react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { Button } from "./button";
 
 export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
@@ -36,7 +36,7 @@ export function FileUploader() {
               getDownloadURL().then((url) => {
                 setDownloadURL(url);
               });
-            }, 2000);
+            }, 7000);
           }
         });
       }, 500);

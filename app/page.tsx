@@ -1,9 +1,9 @@
 "use client";
 import { FileUploader } from "@/components/ui/FileUploader";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useContext } from "react";
 import { FilesContext } from "./context/FilesContext";
-import { motion } from "motion/react";
 
 export default function Home() {
   const files = useContext(FilesContext);
@@ -16,7 +16,7 @@ export default function Home() {
             initial={{ opacity: 0, translateY: -40 }}
             animate={{ opacity: 1, translateY: 0 }}
           >
-            <p>Marksheets -{">"} Speadsheet</p>
+            <p>Marksheets -{">"} Spreadsheet</p>
             <p>
               in <s>hours</s> minutes
             </p>
@@ -39,6 +39,7 @@ export default function Home() {
         </div>
       )}
       <motion.div
+        className="flex flex-col justify-center items-center"
         initial={{ opacity: 0, translateY: 40 }}
         animate={{ opacity: 1, translateY: 0 }}
       >
