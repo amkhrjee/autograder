@@ -113,7 +113,7 @@ export function FileUploader() {
 
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = "result.xlsx";
+      link.download = `${crypto.randomUUID()}.xlsx`;
 
       document.body.appendChild(link);
       link.click();
@@ -178,7 +178,7 @@ export function FileUploader() {
       )}
       {status === Status.Processed && (
         <Button onClick={handleDownload}>
-          <DownloadIcon /> Download result.xlsx
+          <DownloadIcon /> download speadsheeet
         </Button>
       )}
     </>
