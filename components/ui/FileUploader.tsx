@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Bell,
+  Check,
   DownloadIcon,
   Loader2,
   UploadIcon,
@@ -16,15 +17,18 @@ import {
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Button } from "./button";
 
+type Model = "google" | "aws";
+
 export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
   const [downloadURL, setDownloadURL] = useState<string>("");
   const [shouldNotify, setShouldNotify] = useState<boolean>(false);
+  const [currentModel, setCurrentModel] = useState("google");
 
   useEffect(() => {
     if (status === Status.Processed && shouldNotify) {
-      new Notification("Done processing marksheets!", {
-        body: "You can download the .xlsx file or close the tab.",
+      new Notification("done processing marksheets!", {
+        body: "you can download the .xlsx file or close the tab.",
       });
     } else if (status === Status.Processing) {
       const intervalId = setInterval(() => {
@@ -136,12 +140,25 @@ export function FileUploader() {
         onChange={handleFileChange}
       />
       {status === Status.Uploading && (
-        <Button
-          className="text-lg"
-          onClick={() => document.getElementById("file_uploader")?.click()}
-        >
-          <UploadIcon /> Upload scanned marksheets
-        </Button>
+        <div className="flex flex-col justify-center items-center gap-4">
+          <Button
+            className="text-lg"
+            onClick={() => document.getElementById("file_uploader")?.click()}
+          >
+            <UploadIcon /> upload scanned marksheets
+          </Button>
+          <div className="flex gap-4">
+            <Button
+              variant={"outline"}
+              onClick={() => setCurrentModel("google")}
+            >
+              {currentModel === "google" && <Check />} google documentai
+            </Button>
+            <Button variant={"outline"} onClick={() => setCurrentModel("aws")}>
+              {currentModel === "aws" && <Check />} aws textract
+            </Button>
+          </div>
+        </div>
       )}
       {status === Status.Uploaded && (
         <>
@@ -154,7 +171,7 @@ export function FileUploader() {
             variant="secondary"
             onClick={handleGoBack}
           >
-            <ArrowLeft /> Go back
+            <ArrowLeft /> go back
           </Button>
         </>
       )}
@@ -165,7 +182,7 @@ export function FileUploader() {
           </Button>
           <br />
           <p className="text-sm">
-            This may take a while, so keep this tab open.
+            this may take a while, so keep this tab open.
           </p>
           <br />
           <Button disabled={shouldNotify} onClick={getNotificationPermission}>

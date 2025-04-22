@@ -16,7 +16,7 @@ export default function Home() {
             initial={{ opacity: 0, translateY: -40 }}
             animate={{ opacity: 1, translateY: 0 }}
           >
-            <p>Marksheets -{">"} Spreadsheet</p>
+            <p>marksheets -{">"} spreadsheet</p>
             <p>
               in <s>hours</s> minutes
             </p>
@@ -32,7 +32,7 @@ export default function Home() {
       )}
       {files && files!.length && (
         <div className="text-center text-4xl p-4 ">
-          <p>You&apos;ve uploaded</p>
+          <p>you&apos;ve uploaded</p>
           <p className="text-6xl font-bold">{files!.length}</p>
           <p>marksheet{files!.length == 1 ? "" : "s"}</p>
           <br />

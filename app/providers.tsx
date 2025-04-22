@@ -1,10 +1,10 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
+import { Files } from "@/config/definitions";
+import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { FilesContext } from "./context/FilesContext";
 import { SetFilesContext } from "./context/SetFilesContext";
-import { Files } from "@/config/definitions";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [files, setFiles] = useState<Files>(null);
@@ -14,7 +14,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <div className="flex flex-col h-dvh  justify-between">
           {children}
           <footer className="text-center p-4">
-            <p>Made for Tezpur University</p>
+            <p>made for tezpur university</p>
             <p>
               by{" "}
               <Link
@@ -22,7 +22,7 @@ export function Providers({ children }: { children: ReactNode }) {
                 target="_blank"
                 href={"https://amkhrjee.xyz"}
               >
-                Aniruddha
+                aniruddha
               </Link>{" "}
               &{" "}
               <Link
@@ -30,7 +30,7 @@ export function Providers({ children }: { children: ReactNode }) {
                 target="_blank"
                 href={"https://linkedin.com/in/satyam-sajal-15a90325b"}
               >
-                Satyam
+                satyam
               </Link>
             </p>
             <p className="text-sm mt-2 text-gray-600">
