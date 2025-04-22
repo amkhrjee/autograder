@@ -46,6 +46,7 @@ export function FileUploader() {
       }, 500);
     }
   }, [status, shouldNotify]);
+
   const files = useContext(FilesContext);
   const setFiles = useContext(SetFilesContext);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -129,6 +130,10 @@ export function FileUploader() {
     }
   }
 
+  function handleGoogleUpload() {
+    setStatus(Status.Processing);
+  }
+
   return (
     <>
       <input
@@ -162,7 +167,12 @@ export function FileUploader() {
       )}
       {status === Status.Uploaded && (
         <>
-          <Button className="text-lg" onClick={handleNextStep}>
+          <Button
+            className="text-lg"
+            onClick={
+              currentModel === "aws" ? handleNextStep : handleGoogleUpload
+            }
+          >
             Proceed to next step <ArrowRight />
           </Button>
           <br />
@@ -177,7 +187,7 @@ export function FileUploader() {
       )}
       {status === Status.Processing && (
         <>
-          <Button disabled className="text-lg" onClick={handleNextStep}>
+          <Button disabled className="text-lg">
             <Loader2 className="animate-spin" /> Processing
           </Button>
           <br />
