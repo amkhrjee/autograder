@@ -23,14 +23,14 @@ export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
   const [downloadURL, setDownloadURL] = useState<string>("");
   const [shouldNotify, setShouldNotify] = useState<boolean>(false);
-  const [currentModel, setCurrentModel] = useState("google");
+  const [currentModel, setCurrentModel] = useState<Model>("google");
 
   useEffect(() => {
     if (status === Status.Processed && shouldNotify) {
       new Notification("done processing marksheets!", {
         body: "you can download the .xlsx file or close the tab.",
       });
-    } else if (status === Status.Processing) {
+    } else if (status === Status.Processing && currentModel === "aws") {
       const intervalId = setInterval(() => {
         checkAvailibility().then((isAvailable) => {
           if (isAvailable) {
@@ -130,8 +130,52 @@ export function FileUploader() {
     }
   }
 
-  function handleGoogleUpload() {
+  async function handleGoogleDownload() {
+    // setStatus()
+  }
+
+  async function handleGoogleUpload() {
     setStatus(Status.Processing);
+    if (!files || files.length === 0) {
+      console.error("No files available to upload.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    for (const file of files) {
+      console.log("hello", file.name);
+
+      formData.append(file.name, file);
+    }
+    console.log("FormData entries:");
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    const response = await fetch("/api/document", {
+      method: "POST",
+      body: formData,
+    });
+
+    console.log(response);
+
+    const fileStream = await response.blob();
+    const file = new File([fileStream], "document.csv", {
+      type: "text/csv",
+    });
+
+    const downloadUrl = window.URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = "document.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(downloadUrl);
   }
 
   return (
@@ -204,7 +248,11 @@ export function FileUploader() {
         </>
       )}
       {status === Status.Processed && (
-        <Button onClick={handleDownload}>
+        <Button
+          onClick={
+            currentModel === "google" ? handleGoogleDownload : handleDownload
+          }
+        >
           <DownloadIcon /> download speadsheeet
         </Button>
       )}
