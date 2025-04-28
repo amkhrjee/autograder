@@ -60,7 +60,7 @@ export async function checkAvailibility() {
 export async function getDownloadURL() {
   const getObjectCommand = new GetObjectCommand({
     Bucket: process.env.MY_AWS_BUCKET_NAME,
-    Key: "final_output.xlsx",
+    Key: "final_output.csv",
   });
 
   const signedUrl = await getSignedUrl(s3, getObjectCommand, {
