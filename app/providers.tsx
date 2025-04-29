@@ -34,7 +34,7 @@ export function Providers({ children }: { children: ReactNode }) {
               </Link>
             </p>
             <p className="text-sm mt-2 text-gray-600">
-              v0.1.2{" "}
+              v0.1.4{" "}
               <Badge className="text-gray-600" variant={"outline"}>
                 beta
               </Badge>

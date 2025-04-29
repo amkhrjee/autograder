@@ -36,7 +36,7 @@ export async function getSignedURL() {
 export async function checkAvailibility() {
   const headObjectCommand = new HeadObjectCommand({
     Bucket: process.env.MY_AWS_BUCKET_NAME,
-    Key: "final_output.xlsx",
+    Key: "final_output.csv",
   });
 
   try {

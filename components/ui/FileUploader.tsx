@@ -9,13 +9,38 @@ import {
   ArrowLeft,
   ArrowRight,
   Bell,
+  ChartBar,
   Check,
   DownloadIcon,
   Loader2,
   UploadIcon,
 } from "lucide-react";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
+import {
+  CartesianGrid,
+  LabelList,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  XAxis,
+} from "recharts";
 import { Button } from "./button";
+import { Card, CardContent, CardHeader, CardTitle } from "./card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "./chart";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog";
 
 type Model = "google" | "aws";
 
@@ -23,12 +48,47 @@ export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
   const [downloadURL, setDownloadURL] = useState<string>("");
   const [shouldNotify, setShouldNotify] = useState<boolean>(false);
-  const [currentModel, setCurrentModel] = useState<Model>("google");
+  const [currentModel, setCurrentModel] = useState<Model>("aws");
+  const [data, setData] = useState<{ [key: string]: number }>({});
+
+  const pieChartData = [
+    { browser: "safari", visitors: 300 },
+    { browser: "firefox", visitors: 187 },
+  ];
+  const pieChartConfig = {
+    visitors: {
+      label: "no. of students ",
+    },
+
+    safari: {
+      label: "Safari",
+      color: "hsl(142.1 70.6% 45.3%)",
+    },
+    firefox: {
+      label: "Firefox",
+      color: "hsl(0 84.2% 60.2%)",
+    },
+  } satisfies ChartConfig;
+
+  const chartData = [
+    { month: "O", desktop: 186 },
+    { month: "A", desktop: 305 },
+    { month: "B", desktop: 237 },
+    { month: "C", desktop: 73 },
+    { month: "D", desktop: 209 },
+    { month: "F", desktop: 214 },
+  ];
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "hsl(var(--chart-1))",
+    },
+  } satisfies ChartConfig;
 
   useEffect(() => {
     if (status === Status.Processed && shouldNotify) {
       new Notification("done processing marksheets!", {
-        body: "you can download the .xlsx file or close the tab.",
+        body: "you can download the csv file or close the tab.",
       });
     } else if (status === Status.Processing && currentModel === "aws") {
       const intervalId = setInterval(() => {
@@ -114,11 +174,34 @@ export function FileUploader() {
         type: "application/octet-stream",
       });
 
+      const text = await blob.text();
+      const rows = text
+        .trim()
+        .split("\n")
+        .map((row) => row.split(",").map((cell) => cell.trim()));
+      const headers = rows[0];
+
+      const enrollmentIndex = headers.indexOf("Enrollment No.");
+      const totalIndex = headers.indexOf("Total");
+
+      const dict: { [key: string]: number } = {};
+      const rowCopy: string[][] = [];
+
+      for (let i = 1; i < rows.length; i++) {
+        const cols = rows[i];
+        const enrollment = cols[enrollmentIndex] || `row-${i + 1}`;
+        const total = parseFloat(cols[totalIndex]) || 0;
+        dict[enrollment] = total;
+        rowCopy.push([...cols]);
+      }
+      setData(dict);
+      console.log(dict);
+
       const downloadUrl = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `${crypto.randomUUID()}.xlsx`;
+      link.download = `${crypto.randomUUID()}.csv`;
 
       document.body.appendChild(link);
       link.click();
@@ -248,13 +331,279 @@ export function FileUploader() {
         </>
       )}
       {status === Status.Processed && (
-        <Button
-          onClick={
-            currentModel === "google" ? handleGoogleDownload : handleDownload
-          }
-        >
-          <DownloadIcon /> download speadsheeet
-        </Button>
+        <>
+          <Button
+            onClick={
+              currentModel === "google" ? handleGoogleDownload : handleDownload
+            }
+          >
+            <DownloadIcon /> download speadsheeet
+          </Button>
+          <br />
+          <Dialog>
+            <DialogTrigger>
+              <Button variant={"secondary"}>
+                <ChartBar /> view analytics
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ChartBar /> analytics
+                </DialogTitle>
+                <DialogDescription className="p-4">
+                  <div className="grid grid-cols-4 gap-2 ">
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {(
+                            Object.values(data).reduce(
+                              (sum, val) => sum + val,
+                              0
+                            ) / Object.values(data).length
+                          ).toFixed(2)}
+                        </p>
+                        <p>mean</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {(() => {
+                            const sortedValues = Object.values(data).sort(
+                              (a, b) => a - b
+                            );
+                            const mid = Math.floor(sortedValues.length / 2);
+                            return sortedValues.length % 2 === 0
+                              ? (
+                                  (sortedValues[mid - 1] + sortedValues[mid]) /
+                                  2
+                                ).toFixed(2)
+                              : sortedValues[mid];
+                          })()}
+                        </p>
+                        <p>median</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {Object.values(data)
+                            .sort(
+                              (a, b) =>
+                                Object.values(data).filter((v) => v === a)
+                                  .length -
+                                Object.values(data).filter((v) => v === b)
+                                  .length
+                            )
+                            .pop()}
+                        </p>
+                        <p>mode</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {Math.max(...Object.values(data))}
+                        </p>
+                        <p>maximum</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {Math.min(...Object.values(data))}
+                        </p>
+                        <p>minimum</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {(() => {
+                            const values = Object.values(data);
+                            const mean =
+                              values.reduce((sum, val) => sum + val, 0) /
+                              values.length;
+                            const variance =
+                              values.reduce(
+                                (sum, val) => sum + Math.pow(val - mean, 2),
+                                0
+                              ) / values.length;
+                            return Math.sqrt(variance).toFixed(2);
+                          })()}
+                        </p>
+                        <p>std dev</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {Math.max(...Object.values(data)) -
+                            Math.min(...Object.values(data))}
+                        </p>
+                        <p>range</p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="text-center">
+                        <p className="font-bold text-lg">
+                          {(() => {
+                            const values = Object.values(data);
+                            const passCount = values.filter(
+                              (val) => val >= 15
+                            ).length;
+                            const failCount = values.length - passCount;
+                            return `${passCount}/${failCount}`;
+                          })()}
+                        </p>
+                        <p>pass/fail</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <div className="mt-4 flex justify-between gap-2">
+                    <Card className="w-full">
+                      <CardHeader className="font-bold">
+                        top 3 students
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="list-disc pl-4">
+                          {Object.entries(data)
+                            .sort(([, a], [, b]) => b - a)
+                            .slice(0, 3)
+                            .map(([enrollment, marks], index) => (
+                              <li key={index}>
+                                {enrollment}: {marks}
+                              </li>
+                            ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                    <Card className="w-full">
+                      <CardHeader className="font-bold">
+                        bottom 3 students
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="list-disc pl-4">
+                          {Object.entries(data)
+                            .sort(([, a], [, b]) => a - b)
+                            .slice(0, 3)
+                            .map(([enrollment, marks], index) => (
+                              <li key={index}>
+                                {enrollment}: {marks}
+                              </li>
+                            ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <Card className="mt-4">
+                    <CardHeader>
+                      <CardTitle>performance</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer
+                        config={
+                          {
+                            desktop: {
+                              label: "marks",
+                              color: "black",
+                            },
+                          } satisfies ChartConfig
+                        }
+                      >
+                        <LineChart
+                          accessibilityLayer
+                          data={Object.entries(data).map(
+                            ([enrollment, marks]) => ({
+                              enrollment,
+                              marks,
+                            })
+                          )}
+                          margin={{
+                            left: 12,
+                            right: 12,
+                          }}
+                        >
+                          <CartesianGrid vertical={false} />
+                          <XAxis
+                            dataKey="enrollment"
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            tickFormatter={(value) => value.slice(-3)} // Show the last 3 digits of enrollment number
+                          />
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent hideLabel />}
+                          />
+                          <Line
+                            dataKey="marks"
+                            type="linear"
+                            stroke="var(--color-desktop)"
+                            strokeWidth={2}
+                            dot={false}
+                          />
+                        </LineChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                  <Card className="flex flex-col mt-4">
+                    <CardHeader className="items-center pb-0">
+                      <CardTitle>pass/fail</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1 pb-0">
+                      <ChartContainer
+                        config={pieChartConfig}
+                        className="mx-auto aspect-square max-h-[250px] [&_.recharts-text]:fill-background"
+                      >
+                        <PieChart>
+                          <ChartTooltip
+                            content={
+                              <ChartTooltipContent
+                                nameKey="visitors"
+                                hideLabel
+                              />
+                            }
+                          />
+                          <Pie
+                            data={[
+                              {
+                                browser: "pass",
+                                visitors: Object.values(data).filter(
+                                  (val) => val >= 15
+                                ).length,
+                                fill: "hsl(142.1 70.6% 45.3%)", // success color
+                              },
+                              {
+                                browser: "fail",
+                                visitors: Object.values(data).filter(
+                                  (val) => val < 15
+                                ).length,
+                                fill: "red",
+                              },
+                            ]}
+                            dataKey="visitors"
+                          >
+                            <LabelList
+                              dataKey="browser"
+                              className="fill-background"
+                              stroke="none"
+                              fontSize={12}
+                              formatter={(value: keyof typeof pieChartConfig) =>
+                                pieChartConfig[value]?.label
+                              }
+                            />
+                          </Pie>
+                        </PieChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </>
   );

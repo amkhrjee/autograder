@@ -16,7 +16,7 @@ export default function Home() {
             initial={{ opacity: 0, translateY: -40 }}
             animate={{ opacity: 1, translateY: 0 }}
           >
-            <p>marksheets -{">"} spreadsheet</p>
+            <p>answer scripts -{">"} spreadsheet</p>
             <p>
               in <s>hours</s> minutes
             </p>
