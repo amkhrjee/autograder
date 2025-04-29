@@ -51,10 +51,6 @@ export function FileUploader() {
   const [currentModel, setCurrentModel] = useState<Model>("aws");
   const [data, setData] = useState<{ [key: string]: number }>({});
 
-  const pieChartData = [
-    { browser: "safari", visitors: 300 },
-    { browser: "firefox", visitors: 187 },
-  ];
   const pieChartConfig = {
     visitors: {
       label: "no. of students ",
@@ -67,21 +63,6 @@ export function FileUploader() {
     firefox: {
       label: "Firefox",
       color: "hsl(0 84.2% 60.2%)",
-    },
-  } satisfies ChartConfig;
-
-  const chartData = [
-    { month: "O", desktop: 186 },
-    { month: "A", desktop: 305 },
-    { month: "B", desktop: 237 },
-    { month: "C", desktop: 73 },
-    { month: "D", desktop: 209 },
-    { month: "F", desktop: 214 },
-  ];
-  const chartConfig = {
-    desktop: {
-      label: "Desktop",
-      color: "hsl(var(--chart-1))",
     },
   } satisfies ChartConfig;
 
@@ -218,47 +199,38 @@ export function FileUploader() {
   }
 
   async function handleGoogleUpload() {
-    setStatus(Status.Processing);
-    if (!files || files.length === 0) {
-      console.error("No files available to upload.");
-      return;
-    }
-
-    const formData = new FormData();
-
-    for (const file of files) {
-      console.log("hello", file.name);
-
-      formData.append(file.name, file);
-    }
-    console.log("FormData entries:");
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
-    const response = await fetch("/api/document", {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log(response);
-
-    const fileStream = await response.blob();
-    const file = new File([fileStream], "document.csv", {
-      type: "text/csv",
-    });
-
-    const downloadUrl = window.URL.createObjectURL(file);
-
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.download = "document.csv";
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    window.URL.revokeObjectURL(downloadUrl);
+    alert("workng on fixing this");
+    // setStatus(Status.Processing);
+    // if (!files || files.length === 0) {
+    //   console.error("No files available to upload.");
+    //   return;
+    // }
+    // const formData = new FormData();
+    // for (const file of files) {
+    //   console.log("hello", file.name);
+    //   formData.append(file.name, file);
+    // }
+    // console.log("FormData entries:");
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
+    // const response = await fetch("/api/document", {
+    //   method: "POST",
+    //   body: formData,
+    // });
+    // console.log(response);
+    // const fileStream = await response.blob();
+    // const file = new File([fileStream], "document.csv", {
+    //   type: "text/csv",
+    // });
+    // const downloadUrl = window.URL.createObjectURL(file);
+    // const link = document.createElement("a");
+    // link.href = downloadUrl;
+    // link.download = "document.csv";
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+    // window.URL.revokeObjectURL(downloadUrl);
   }
 
   return (
