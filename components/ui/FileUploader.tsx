@@ -48,7 +48,7 @@ export function FileUploader() {
   const [status, setStatus] = useState<Status>(Status.Uploading);
   const [downloadURL, setDownloadURL] = useState<string>("");
   const [shouldNotify, setShouldNotify] = useState<boolean>(false);
-  const [currentModel, setCurrentModel] = useState<Model>("aws");
+  const [currentModel, setCurrentModel] = useState<Model>("google");
   const [data, setData] = useState<{ [key: string]: number }>({});
 
   const pieChartConfig = {
@@ -199,38 +199,39 @@ export function FileUploader() {
   }
 
   async function handleGoogleUpload() {
-    alert("workng on fixing this");
-    // setStatus(Status.Processing);
-    // if (!files || files.length === 0) {
-    //   console.error("No files available to upload.");
-    //   return;
-    // }
-    // const formData = new FormData();
-    // for (const file of files) {
-    //   console.log("hello", file.name);
-    //   formData.append(file.name, file);
-    // }
-    // console.log("FormData entries:");
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
-    // const response = await fetch("/api/document", {
-    //   method: "POST",
-    //   body: formData,
-    // });
-    // console.log(response);
-    // const fileStream = await response.blob();
-    // const file = new File([fileStream], "document.csv", {
-    //   type: "text/csv",
-    // });
-    // const downloadUrl = window.URL.createObjectURL(file);
-    // const link = document.createElement("a");
-    // link.href = downloadUrl;
-    // link.download = "document.csv";
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-    // window.URL.revokeObjectURL(downloadUrl);
+    // alert("workng on fixing this");
+    setStatus(Status.Processing);
+    if (!files || files.length === 0) {
+      console.error("No files available to upload.");
+      return;
+    }
+    const formData = new FormData();
+    for (const file of files) {
+      console.log("hello", file.name);
+      formData.append(file.name, file);
+    }
+    console.log("FormData entries:");
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    const response = await fetch("/api/document", {
+      method: "POST",
+      body: formData,
+    });
+    console.log(response);
+    const fileStream = await response.blob();
+    const file = new File([fileStream], "document.csv", {
+      type: "text/csv",
+    });
+    const downloadUrl = window.URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = "document.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+    setStatus(Status.Processed);
   }
 
   return (

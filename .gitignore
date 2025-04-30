@@ -44,3 +44,4 @@ next-env.d.ts
 /.clerk/
 
 *.csv
+google_api_key.json
