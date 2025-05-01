@@ -10,6 +10,7 @@ const GCP_WORKLOAD_IDENTITY_POOL_ID = process.env.GCP_WORKLOAD_IDENTITY_POOL_ID;
 const GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID =
   process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID;
 
+console.log(GCP_PROJECT_ID, GCP_PROJECT_NUMBER, GCP_SERVICE_ACCOUNT_EMAIL);
 // Initialize the External Account Client
 const authClient = ExternalAccountClient.fromJSON({
   type: "external_account",
@@ -31,9 +32,12 @@ export async function POST(request: Request) {
       files.push(entry[1]);
     }
   }
-
+  const oidcToken = await getVercelOidcToken();
+  console.log(oidcToken);
   const name = process.env.GOOGLE_CLOUD_PROJECT_NAME;
   const client = new DocumentProcessorServiceClient({
+    project: GCP_PROJECT_ID,
+    location: "us",
     googleAuthOptions: {
       authClient,
       projectId: GCP_PROJECT_ID,
